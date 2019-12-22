@@ -1,0 +1,18 @@
+# place otus
+pplacer -o query.align.jplace -p --keep-at-most 10 -c mmetsp.refpkg query.align.fa
+
+# Generate a csv file of placements, with only a single placement reported for each query read.
+guppy to_csv --point-mass --pp -o query.align.csv query.align.jplace
+
+# Generate a phyloxml tree with edges fattened according to the number of placements.
+guppy fat --node-numbers --point-mass --pp -o query.align.phyloxml query.align.jplace
+
+# I'm not sure why there are multiple edges in the reference seqs, but here parsing those out so I can assign the csv file of OTUs to be references
+# remove first line which is weird symbols
+grep "MMETSP" query.align.jplace | sed 's/MM/ MM/g' | tr ' ' '\n' | tr '{' '\n' | awk -F} '{print $1}' | awk -F: '{print $1}' | tr '\n' ' ' | sed 's/ / |/g' | sed 's/|MME/\nMME/g' | grep -v "((" > edge_code.txt
+
+# Create a column to add to the csv file with the edge names, creates a new file called query.align.wkey.csv
+./tr_edges.sh query.align.csv 
+
+#Filter and remove extra information in otu ids
+awk -F, '$6>=0.9' query.align.wkey.csv > query.align.wkey.filt.csv

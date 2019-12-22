@@ -1,0 +1,13 @@
+# Degap if necessary
+# seqmagick mogrifty --ungap 18s_all_mmetsp_unique.fa
+
+cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
+
+# Align
+cmalign --dna -o mmetsp.align.sto --outformat Pfam eukarya-0p1.conv.cm 18s_all_mmetsp_unique.fa
+
+# Convert to fasta format
+seqmagick convert mmetsp.align.sto mmetsp.align.fa
+
+#Deduplicate sequences
+seqmagick mogrify --deduplicate-sequences mmetsp.align.fa
