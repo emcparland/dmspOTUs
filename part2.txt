@@ -1,0 +1,34 @@
+# save name of alignment to easily sed any changes in the alignment names after manual curation
+NAME=mmetsp.align.nogap.v4.fa
+sed -i 's/|/_/g' $NAME
+sed -i 's/=/_/g' $NAME
+sed -i 's/:/_/g' $NAME
+sed -i 's/(/_/g' $NAME
+sed -i 's/)/_/g' $NAME
+
+# Build tree without confidence scores
+raxmlHPC-PTHREADS -T 8 -m GTRGAMMA -s $NAME -n mmetsp_allv4.tre -f d -p 12345
+
+# Root the tree
+raxmlHPC-PTHREADS -T 2 -m GTRGAMMA -f I -t RAxML_bestTree.mmetsp_allv4.tre -n mmetsp_allv4_root.tre
+
+# Generate confidence scores for tree
+raxmlHPC-PTHREADS -T 8 -m GTRGAMMA -f J -p 12345 -t RAxML_rootedTree.mmetsp_allv4_root.tre -n mmetsp_allv4_root_conf.tre -s $NAME
+
+# Create reference package with alignment, the info for first tree built (without confidence scores) and the tree file of the second tree built (with confidence scores)
+taxit create -l 18S_rRNA -P mmetsp.refpkg --aln-fasta $NAME --tree-stats RAxML_info.mmetsp_allv4.tre  --tree-file RAxML_fastTreeSH_Support.mmetsp_allv4_root_conf.tre
+
+# Now align the query reads and reference alignment
+# Clean names of OTUs
+sed -i 's/ /_/g' otu_seqs.fa
+# If yours have any funky symbols you could use this handy command from the Bowman tutorial
+# tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < otu_seqs.fa
+# Concatenate the query reads and reference alignment (use the RAxML alignment which conveniently removed any undetermined gaps for us that were missed during manual curation)
+cat mmetsp.align.nogap.v4.fa.reduced otu_seqs.fa > query.fa
+# Remove gaps
+seqmagick mogrify --ungap query.fa
+# Align
+cmalign --dna -o query.sto --outformat Pfam eukarya-0p1.conv.cm query.fa
+# Convert to fasta
+seqmagick convert query.sto query.align.fa
+
