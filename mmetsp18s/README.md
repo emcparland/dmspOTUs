@@ -54,17 +54,19 @@ Check again
 
 ## 1. Create alignment of reference sequences with Infernal using the 18S ssu cov model as a reference for alignment.
 Name of your fasta file with reference sequences
-> ```NAME_FA=DMSP_prod_db_18S.fa```
-Degap if necessary
-> ```seqmagick mogrifty --ungap $NAME_FA```
-??????
-> ```cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm```
-Align
-> ```cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA```
-Convert to fasta format
->```seqmagick convert align.sto align.fa```
-Deduplicate sequences
-> ```seqmagick mogrify --deduplicate-sequences align.fa```
+
+```NAME_FA=DMSP_prod_db_18S.fa```
+- Degap if necessary
+```seqmagick mogrifty --ungap $NAME_FA```
+- ??????
+```cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm```
+- Align
+```cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA```
+- Convert to fasta format
+```seqmagick convert align.sto align.fa```
+- Deduplicate sequences
+```seqmagick mogrify --deduplicate-sequences align.fa```
+
 **I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
