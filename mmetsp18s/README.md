@@ -56,48 +56,72 @@ grep "^>" 18s_all_mmetsp_unique.fa |wc -l
 
 ## 1. Create alignment of reference sequences with Infernal using the 18S ssu cov model as a reference for alignment.
 Name of your fasta file with reference sequences
-```bash
+```
 NAME_FA=DMSP_prod_db_18S.fa
 ```
 Degap if necessary
-```seqmagick mogrifty --ungap $NAME_FA```
-- ??????
-```cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm```
-- Align
-```cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA```
-- Convert to fasta format
-```seqmagick convert align.sto align.fa```
-- Deduplicate sequences
-```seqmagick mogrify --deduplicate-sequences align.fa```
-
+```
+seqmagick mogrifty --ungap $NAME_FA
+```
+??????
+```
+cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
+```
+Align
+```
+cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA
+```
+Convert to fasta format
+```
+seqmagick convert align.sto align.fa
+```
+Deduplicate sequences
+```
+seqmagick mogrify --deduplicate-sequences align.fa
+```
 **I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
 - Name of alignment AND to easily sed any extract characters in alignment that will mess up next steps
-```NAMEFA=align.fa```
-```NAMET=dmsp```
-```sed -i 's/|/_/g' $NAMEFA```
-```sed -i 's/=/_/g' $NAMEFA```
-```sed -i 's/:/_/g' $NAMEFA```
-```sed -i 's/(/_/g' $NAMEFA```
-```sed -i 's/)/_/g' $NAMEFA```
-```#sed -i 's/-/_/g' $NAMEFA```
-```sed -i 's/\//_/g' $NAMEFA```
-```sed -i 's/\.//g' $NAMEFA```
+```
+NAMEFA=align.fa
+```
+```
+NAMET=dmsp
+```
+```
+sed -i 's/|/_/g' $NAMEFA
+sed -i 's/=/_/g' $NAMEFA
+sed -i 's/:/_/g' $NAMEFA
+sed -i 's/(/_/g' $NAMEFA
+sed -i 's/)/_/g' $NAMEFA
+#sed -i 's/-/_/g' $NAMEFA
+sed -i 's/\//_/g' $NAMEFA
+sed -i 's/\.//g' $NAMEFA```
 Per Bowman tutorial: Taxtastic can't read a RAxML stats file with confidence values, work around this by building tree without scores first than calculate scores separately and add back to your previously generated tree.
-- First build the tree without confidence scores
-```raxmlHPC-PTHREADS -T 4 -m GTRGAMMA -s $NAMEFA -n $NAMET.tre -f d -p 12345```
-- Root the tree with RAxML
-```raxmlHPC-PTHREADS -T 2 -m GTRGAMMA -f I -t RAxML_bestTree.$NAMET.tre -n root_$NAMET.tre```
-- Generate the confidence scores for tree separately
-```raxmlHPC-PTHREADS -T 4 -m GTRGAMMA -f J -p 12345 -t RAxML_rootedTree.root_$NAMET.tre -n root_conf_$NAMET.tre -s $NAMEFA```
-- Create reference package with taxit command
-```taxit create -l 18S_rRNA -P refpkg --aln-fasta $NAMEFA --tree-stats RAxML_info.$NAMET.tre  --tree-file RAxML_fastTreeSH_Support.root_conf_$NAMET.tre```
+First build the tree without confidence scores
+```
+raxmlHPC-PTHREADS -T 4 -m GTRGAMMA -s $NAMEFA -n $NAMET.tre -f d -p 12345
+```
+Root the tree with RAxML
+```
+raxmlHPC-PTHREADS -T 2 -m GTRGAMMA -f I -t RAxML_bestTree.$NAMET.tre -n root_$NAMET.tre
+```
+Generate the confidence scores for tree separately
+```
+raxmlHPC-PTHREADS -T 4 -m GTRGAMMA -f J -p 12345 -t RAxML_rootedTree.root_$NAMET.tre -n root_conf_$NAMET.tre -s $NAMEFA
+```
+Create reference package with taxit command
+```
+taxit create -l 18S_rRNA -P refpkg --aln-fasta $NAMEFA --tree-stats RAxML_info.$NAMET.tre  --tree-file RAxML_fastTreeSH_Support.root_conf_$NAMET.tre
+```
 
 ## 3. Phylogenetic placement of 18S OTUs onto reference
-- Align the query reads and reference alignment
-- First, clean names in OTU file
-```sed -i 's/ /_/g' otus.fa```
+Align the query reads and reference alignment
+First, clean names in OTU file
+```
+sed -i 's/ /_/g' otus.fa
+```
 - If yours have any funky symbols you could use this handy command from the Bowman tutorial
 ```tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < otus.fa ```
 - Concatenate the query reads and reference alignment
