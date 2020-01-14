@@ -30,26 +30,42 @@ I should have n=5072 OTU sequences
 ```grep "^>" otu_seqs.fa |wc -l```
 
 - The MMETSP 18S sequences
-My reference sequences are full-length 18S sequences from the transcriptomes of the MMETSP database. For blast analyses I used the most recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)), for the 18S sequences, I obtained the sequences from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa)
-You should have n=655 18S sequences from the MMETSP transcriptomes. (Again, this will be less than the n=678 you would have from the Johnson re-analysis work).
+My reference sequences are full-length 18S sequences from the transcriptomes of the MMETSP database. For blast analyses I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)), for the 18S sequences, I obtained the sequences from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa)
+You should have n=655 18S sequences from the MMETSP transcriptomes. (Note, this is less than the n=678 you would have from the Johnson study).
 ```grep "^>" 18s.fa | wc -l ```
-Every transcriptome has a representative 18S sequence meaning there are duplicate 18S sequences, keep only the unique strains (n=393).
+Every transcriptome has a representative 18S sequence meaning there are duplicate 18S sequences, use the shell script below to keep only the unique strains (n=393).
 ```grep "^>" 18s.fa | sort -k1.12 | uniq -s11 |wc -l ```
+Find and remove duplicates strains
+```grep "^>" 18s.fa > all_id.txt```
+```sort -k1.12 all_id.txt | uniq -s11 > unique_id.txt```
+```./extract_erin.sh unique_id.txt 18s.fa```
+Check that it worked
+```grep "^>" 18s_all_mmetsp_unique.fa > tmp.txt```
+```comm -12 tmp.txt unique_id.txt |wc -l```
+```rm tmp.txt```
+Clean up symbols
+```sed -i 's/-/_/g' 18s_all_mmetsp_unique.fa```
+```sed -i 's/|/_/g' 18s_all_mmetsp_unique.fa```
+```sed -i 's/=/_/g' 18s_all_mmetsp_unique.fa```  
+```sed -i 's/:/_/g' 18s_all_mmetsp_unique.fa```
+```sed -i 's/ /_/g' 18s_all_mmetsp_unique.fa```
+Check again
+```grep "^>" 18s_all_mmetsp_unique.fa |wc -l```
 
 ## 1. Create alignment of reference sequences with Infernal using the 18S ssu cov model as a reference for alignment.
-- Name of your fasta file with reference sequences
-```NAME_FA=DMSP_prod_db_18S.fa```
-- Degap if necessary
-```seqmagick mogrifty --ungap $NAME_FA```
-- ??????
-```cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm```
-- Align
-```cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA```
-- Convert to fasta format
-```seqmagick convert align.sto align.fa```
-- Deduplicate sequences
-```seqmagick mogrify --deduplicate-sequences align.fa```
-- **I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
+Name of your fasta file with reference sequences
+> ```NAME_FA=DMSP_prod_db_18S.fa```
+Degap if necessary
+> ```seqmagick mogrifty --ungap $NAME_FA```
+??????
+> ```cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm```
+Align
+> ```cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA```
+Convert to fasta format
+>```seqmagick convert align.sto align.fa```
+Deduplicate sequences
+> ```seqmagick mogrify --deduplicate-sequences align.fa```
+**I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
 - Name of alignment AND to easily sed any extract characters in alignment that will mess up next steps
