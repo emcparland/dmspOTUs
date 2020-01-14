@@ -8,7 +8,7 @@ Motivation:
 - We can assess the diversity and relative abundance of the eukaryotic community in mixed natural communities with the 18S gene (V4 region here).
 
 Method:
-- I previously used blast to determine which of the 400+ strains in the MMETSP database ([Keeling et al. 2014](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001889))contain one (or more) of the DMSP synthesis genes. 
+- I previously used blast to determine which of the 400+ strains in the MMETSP database ([Keeling et al. 2014](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001889)) contain one (or more) of the DMSP synthesis genes. 
 - Create a reference alignment of the 18S gene of each MMETSP strain, then use pplacer ([Matsen, Kodner and Armbrust 2010](https://matsen.fhcrc.org/papers/matsen2010pplacer.pdf)) to align the environmental 18S OTUs with this reference alignment.
 - If an OTU is significantly aligned with one of the reference sequences and the respective reference sequence also contains one of the DMSP synthesis genes, assume that the OTU could also contain the synthesis gene
 
@@ -23,6 +23,10 @@ A large portion of this analysis was made possible by an awesome blog post from 
 - [guppy](https://matsen.github.io/pplacer/generated_rst/guppy.html)
 - [seqmagick](http://fhcrc.github.io/seqmagick/)
 - [RAxML](https://cme.h-its.org/exelixis/web/software/raxml/) (can skip if starting at step 3)
+- [Rfam](https://rfam.xfam.org/family/RF01960) (RF01960) covariance model for euks small subunit rRNA is provided here for convenience (can skip if starting at step 3)
+```
+cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
+```
 
 ## You'll need:
 - Your 18S OTUs
@@ -35,7 +39,7 @@ I should have n=5072 OTU sequences
 grep "^>" otu_seqs.fa |wc -l
 ```
 
-- The MMETSP 18S sequences
+- The MMETSP 18S sequences: 
 My reference sequences are full-length 18S sequences from the transcriptomes of the MMETSP database. For blast analyses I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)), for the 18S sequences, I obtained the sequences from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa)
 You should have n=655 18S sequences from the MMETSP transcriptomes. (Note, this is less than the n=678 you would have from the Johnson study).
 ```
@@ -57,7 +61,8 @@ comm -12 tmp.txt unique_id.txt |wc -l
 rm tmp.txt
 ```
 Clean up symbols
-```sed -i 's/-/_/g' 18s_all_mmetsp_unique.fa
+```
+sed -i 's/-/_/g' 18s_all_mmetsp_unique.fa
 sed -i 's/|/_/g' 18s_all_mmetsp_unique.fa
 sed -i 's/=/_/g' 18s_all_mmetsp_unique.fa 
 sed -i 's/:/_/g' 18s_all_mmetsp_unique.fa
@@ -77,10 +82,6 @@ Degap if necessary
 ```
 seqmagick mogrifty --ungap $NAME_FA
 ```
-??????
-```
-cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
-```
 Align
 ```
 cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA
@@ -96,11 +97,9 @@ seqmagick mogrify --deduplicate-sequences align.fa
 **I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
-- Name of alignment AND to easily sed any extract characters in alignment that will mess up next steps
+- Name of alignment AND XX to easily sed any extract characters in alignment that will mess up next steps
 ```
 NAMEFA=align.fa
-```
-```
 NAMET=dmsp
 ```
 ```
@@ -158,7 +157,7 @@ Convert to fasta
 seqmagick convert query.sto query.align.fa
 ```
 
-Place your OTUs into the 18S phylogeny
+Place your OTUs into the 18S phylogeny.
 *Make sure you have read the pplacer documentation to be sure these flag choices are appropriate for your questions.*
 ```
 pplacer -o query.align.jplace -p --keep-at-most 10 -c refpkg query.align.fa
