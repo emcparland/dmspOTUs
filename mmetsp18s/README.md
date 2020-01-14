@@ -50,12 +50,13 @@ Clean up symbols
 ```sed -i 's/:/_/g' 18s_all_mmetsp_unique.fa```
 ```sed -i 's/ /_/g' 18s_all_mmetsp_unique.fa```
 Check again
-```grep "^>" 18s_all_mmetsp_unique.fa |wc -l
+```
+grep "^>" 18s_all_mmetsp_unique.fa |wc -l
 ```
 
 ## 1. Create alignment of reference sequences with Infernal using the 18S ssu cov model as a reference for alignment.
 Name of your fasta file with reference sequences
-```
+```bash
 NAME_FA=DMSP_prod_db_18S.fa
 ```
 Degap if necessary
