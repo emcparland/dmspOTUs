@@ -1,5 +1,7 @@
 # Putative DMSP synthesis of 18S OTUs with pplacer
 ## Quick summary
+(work in progress)
+
 Question: Which eukaryotic DMSP producers are present in a natural mixed community?
 
 Motivation: 
@@ -30,6 +32,7 @@ cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
 
 ## You'll need:
 - Your 18S OTUs
+
 Mine happen to be here from a long time ago and I duplicated them into a new file so as not to accidentally ruin the hardwork of Erin 3 years ago:
 ```
 cp ~/hu_tutorial/all_seq/pick_open/rep_set.fna otu_seqs.fa
@@ -39,13 +42,15 @@ I should have n=5072 OTU sequences
 grep "^>" otu_seqs.fa |wc -l
 ```
 
-- The MMETSP 18S sequences: 
-My reference sequences are full-length 18S sequences from the transcriptomes of the MMETSP database. For blast analyses I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)), for the 18S sequences, I obtained the sequences from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa)
+- The MMETSP 18S sequences
+
+My reference sequences are full-length 18S sequences from the MMETSP strains, which were obtained from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa). (For blast analyses to determine which MMETSP contain DMSP synthesis genes, I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)).
+
 You should have n=655 18S sequences from the MMETSP transcriptomes. (Note, this is less than the n=678 you would have from the Johnson study).
 ```
 grep "^>" 18s.fa | wc -l
 ```
-Every transcriptome has a representative 18S sequence meaning there are duplicate 18S sequences, use the shell script below to keep only the unique strains (n=393).
+Every transcriptome has a representative 18S sequence meaning there are duplicate 18S sequences, use the shell script below to keep only one sequence per strain (n=393).
 ```
 grep "^>" 18s.fa | sort -k1.12 | uniq -s11 |wc -l
 ```
