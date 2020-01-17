@@ -1,0 +1,121 @@
+
+
+IMPORTANT WARNING: Sequences MMETSP1444_Phaeocystis_antarctica_CCMP1374/11-1627 and MMETSP1100_Phaeocystis_antarctica_CaronLabIsolate/84-1700 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1323_Florenciella_parvula_RCC1693/5-1622 and MMETSP1344_Florenciella_parvula_CCMP2471/28-1645 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1319_Bolidomonas_pacifica_RCC208/5-1625 and MMETSP1320_Bolidomonas_sp_RCC2347/5-1625 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP0527_Karenia_brevis_SP3/69-1680 and MMETSP0573_Karenia_brevis_SP1/39-1650 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1115_Symbiodinium_sp_CCMP2430/20-1636 and MMETSP1374_Symbiodinium_sp_cladeA/18-1634 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1039_Skeletonema_marinoi_FE7/81-1700 and MMETSP1428_Skeletonema_marinoi_UNC1201/33-1652 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1039_Skeletonema_marinoi_FE7/81-1700 and MMETSP0013_Skeletonema_costatum_1716/60-1679 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1039_Skeletonema_marinoi_FE7/81-1700 and MMETSP0320_Skeletonema_marinoi_SM1012Den_03/81-1700 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP0705_Asterionellopsis_glacialis_CCMP134/32-1645 and MMETSP1394_Asterionellopsis_glacialis_CCMP1581/36-1649 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP0359_Scrippsiella_hangoei_SHTV_5/68-1676 and MMETSP0370_Peridinium_aciculiferum_PAER_2/70-1678 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP0327_Pseudo_nitzschia_delicatissima_B596/14-1617 and MMETSP1432_Pseudo_nitzschia_delicatissima_UNC1205/34-1637 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1080_Micromonas_sp_CCMP1646/61-1654 and MMETSP1401_Micromonas_pusilla_CCAC1681/24-1617 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1041_Hemiselmis_andersenii_CCMP439/63-1652 and MMETSP1043_Hemiselmis_andersenii_CCMP441/29-1618 are exactly identical
+
+
+IMPORTANT WARNING: Sequences MMETSP1358_Bigelowiella_natans_CCMP1242/63-1636 and MMETSP1052_Bigelowiella_natans_CCMP623/30-1603 are exactly identical
+
+IMPORTANT WARNING
+Found 14 sequences that are exactly identical to other sequences in the alignment.
+Normally they should be excluded from the analysis.
+
+Just in case you might need it, an alignment file with 
+sequence duplicates removed is printed to file mmetsp.align.nogap.full.fa.reduced
+
+
+Using BFGS method to optimize GTR rate parameters, to disable this specify "--no-bfgs" 
+
+
+
+This is RAxML version 8.2.12 released by Alexandros Stamatakis on May 2018.
+
+With greatly appreciated code contributions by:
+Andre Aberer      (HITS)
+Simon Berger      (HITS)
+Alexey Kozlov     (HITS)
+Kassian Kobert    (HITS)
+David Dao         (KIT and HITS)
+Sarah Lutteropp   (KIT and HITS)
+Nick Pattengale   (Sandia)
+Wayne Pfeiffer    (SDSC)
+Akifumi S. Tanabe (NRIFS)
+Charlie Taylor    (UF)
+
+
+Alignment has 1495 distinct alignment patterns
+
+Proportion of gaps and completely undetermined characters in this alignment: 4.72%
+
+RAxML rapid hill-climbing mode
+
+Using 1 distinct models/data partitions with joint branch length optimization
+
+
+Executing 1 inferences on the original alignment using 1 distinct randomized MP trees
+
+All free model parameters will be estimated by RAxML
+GAMMA model of rate heterogeneity, ML estimate of alpha-parameter
+
+GAMMA Model parameters will be estimated up to an accuracy of 0.1000000000 Log Likelihood units
+
+Partition: 0
+Alignment Patterns: 1495
+Name: No Name Provided
+DataType: DNA
+Substitution Matrix: GTR
+
+
+
+
+RAxML was called as follows:
+
+raxmlHPC-PTHREADS -T 4 -m GTRGAMMA -s mmetsp.align.nogap.full.fa -n mmetsp_all.tre -f d -p 12345 
+
+
+Partition: 0 with name: No Name Provided
+Base frequencies: 0.263 0.199 0.264 0.273 
+
+Inference[0]: Time 360.178982 GAMMA-based likelihood -99988.372680, best rearrangement setting 15
+alpha[0]: 0.469685 rates[0] ac ag at cg ct gt: 0.907629 2.103476 1.063657 0.902349 3.533855 1.000000 
+
+
+Conducting final model optimizations on all 1 trees under GAMMA-based models ....
+
+Inference[0] final GAMMA-based Likelihood: -99988.346164 tree written to file /home/loihi/mcparlan/dmspOTUs/mmetsp18s/dec.26.2019/RAxML_result.mmetsp_all.tre
+
+
+Starting final GAMMA-based thorough Optimization on tree 0 likelihood -99988.346164 .... 
+
+Final GAMMA-based Score of best tree -99988.346164
+
+Program execution info written to /home/loihi/mcparlan/dmspOTUs/mmetsp18s/dec.26.2019/RAxML_info.mmetsp_all.tre
+Best-scoring ML tree written to: /home/loihi/mcparlan/dmspOTUs/mmetsp18s/dec.26.2019/RAxML_bestTree.mmetsp_all.tre
+
+Overall execution time: 478.747456 secs or 0.132985 hours or 0.005541 days
+

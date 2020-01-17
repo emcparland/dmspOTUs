@@ -1,0 +1,25 @@
+{
+    "files": {
+        "aln_fasta": "mmetsp.align.nogap.full.fa", 
+        "phylo_model": "phylo_modelWd2les.json", 
+        "tree": "RAxML_fastTreeSH_Support.mmetsp_all_root_conf.tre", 
+        "tree_stats": "RAxML_info.mmetsp_all.tre"
+    }, 
+    "rollback": null, 
+    "log": [
+        "Stripped refpkg (removed 0 files)", 
+        "Loaded initial files into empty refpkg"
+    ], 
+    "metadata": {
+        "create_date": "2019-12-26 09:13:23", 
+        "format_version": "1.1", 
+        "locus": "18S_rRNA"
+    }, 
+    "rollforward": null, 
+    "md5": {
+        "aln_fasta": "88c77cad3b35809b8029758b02b2470e", 
+        "phylo_model": "dfb718329185391fc3258691fe304fa2", 
+        "tree": "8150bb3366d699bec6d9e648515aaf65", 
+        "tree_stats": "ad5618321b43fec61216cd871eb9ae32"
+    }
+}
