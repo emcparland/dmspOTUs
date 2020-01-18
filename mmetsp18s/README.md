@@ -136,6 +136,9 @@ taxit create -l 18S_rRNA -P refpkg --aln-fasta $NAMEFA --tree-stats RAxML_info.$
 ```
 
 ## 3. Phylogenetic placement of 18S OTUs onto reference
+- mmetsp.align.nogap.full.fa  (reference alignment)
+- mmetsp.refpkg (reference package created above for pplacer)
+
 Align the query reads and reference alignment
 First, clean names in OTU file
 ```
@@ -147,7 +150,7 @@ tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < otus.fa
 ```
 Concatenate the query reads and reference alignment
 ```
-cat align.fa otus.fa > query.fa
+cat mmetsp.align.nogap.full.fa  otus.fa > query.fa
 ```
 Remove gaps
 ```
@@ -165,7 +168,7 @@ seqmagick convert query.sto query.align.fa
 Place your OTUs into the 18S phylogeny.
 *Make sure you have read the pplacer documentation to be sure these flag choices are appropriate for your questions.*
 ```
-pplacer -o query.align.jplace -p --keep-at-most 10 -c refpkg query.align.fa
+pplacer -o query.align.jplace -p --keep-at-most 10 -c mmetsp.refpkg query.align.fa
 ```
 Use guppy to convert the json file to a parsible csv file and a phyloxml tree with edges fattened according to density of OTU placements.
 ```
@@ -183,17 +186,16 @@ remove first line which is weird symbols
 ```
 grep "MMETSP" query.align.jplace | sed 's/MM/ MM/g' | tr ' ' '\n' | tr '{' '\n' | awk -F} '{print $1}' | awk -F: '{print $1}' | tr '\n' ' ' | sed 's/ / |/g' | sed 's/|MME/\nMME/g' | grep -v "((" > edge_code.txt
 ```
-**OR**
-```
-sed 's/,[A-Z]\|([A-Z]/\n&/g' query.align.jplace |head -n107 |tail -n105 |tr '{' '\n'|awk -F} '{print $1}' |awk -F: '{print $1}' | tr '\n' ' ' | sed 's/,//g' | sed 's/(//g' | sed 's/ / |/g' | sed 's/|[A-Z]/\n&/g' > edge_code.txt
-```
 Create a new column to add to the to the query.align.csv file that interprets which edge each OTU was placed on, will create a new file called query.align.wkey.csv
 ```
 ./tr_edges.sh query.align.csv
 ```
 
 ## 4. Process results
-Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -10,000 (for the alignment using known DMSP producers I used a likelihood of < -4000)
+Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -10,000
+- assign_lineage.sh (a shell script to add the lineages of MMETSP strains)
+- mmetspkey.txt (used by the shell script for reference)
+
 ```
 awk -F, '$6>=0.9 && $7<=-10000' query.align.wkey.csv > query.align.wkey.filt.csv
 echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.filtered.csv
