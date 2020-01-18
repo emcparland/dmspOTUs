@@ -1,0 +1,25 @@
+{
+    "files": {
+        "aln_fasta": "align.fa", 
+        "phylo_model": "phylo_modelqU4ve4.json", 
+        "tree": "RAxML_fastTreeSH_Support.root_conf_dmsp.tre", 
+        "tree_stats": "RAxML_info.dmsp.tre"
+    }, 
+    "rollback": null, 
+    "log": [
+        "Stripped refpkg (removed 0 files)", 
+        "Loaded initial files into empty refpkg"
+    ], 
+    "metadata": {
+        "create_date": "2019-12-31 17:24:50", 
+        "format_version": "1.1", 
+        "locus": "18S_rRNA"
+    }, 
+    "rollforward": null, 
+    "md5": {
+        "aln_fasta": "6c24517b83aa34b600c2ca22d23073ac", 
+        "phylo_model": "768786eb3d5a61c75f2f663f0c586eec", 
+        "tree": "027621a5afd2229cc9e557f1c0c0eb36", 
+        "tree_stats": "a83f4deafeb019c944b706a93d0ad32a"
+    }
+}
