@@ -25,12 +25,12 @@ A large portion of this analysis was made possible by an awesome blog post from 
 - [guppy](https://matsen.github.io/pplacer/generated_rst/guppy.html)
 - [seqmagick](http://fhcrc.github.io/seqmagick/)
 - [RAxML](https://cme.h-its.org/exelixis/web/software/raxml/) (can skip if starting at step 3)
-- [Rfam](https://rfam.xfam.org/family/RF01960) (RF01960) covariance model for euks small subunit rRNA is provided here for convenience (can skip if starting at step 3)
+
+## You'll need:
+- [Rfam](https://rfam.xfam.org/family/RF01960) (RF01960) covariance model for euks small subunit rRNA is (provided here for convenience, can skip if starting at step 3)
 ```
 cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
 ```
-
-## You'll need:
 - Your 18S OTUs
 
 Mine happen to be here from a long time ago and I duplicated them into a new file so as not to accidentally ruin the hardwork of Erin 3 years ago:
@@ -42,7 +42,7 @@ I should have n=5072 OTU sequences
 grep "^>" otu_seqs.fa |wc -l
 ```
 
-- The MMETSP 18S sequences
+- The MMETSP 18S sequences (provided here for convenience)
 
 My reference sequences are full-length 18S sequences from the MMETSP strains, which were obtained from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa). (For blast analyses to determine which MMETSP contain DMSP synthesis genes, I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)).
 
@@ -196,13 +196,13 @@ Create a new column to add to the to the query.align.csv file that interprets wh
 Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -10,000 (for the alignment using known DMSP producers I used a likelihood of < -4000)
 ```
 awk -F, '$6>=0.9 && $7<=-10000' query.align.wkey.csv > query.align.wkey.filt.csv
-echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.Filt.csv
-rm query.align.wkey.filt.csv
+echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.filtered.csv
+rm query.align.wkey.filtered.csv
 ```
 Add lineages to the key
 ```
-./assign_lineage.sh query.align.wkey.filt.csv
-paste -d, query.align.wkey.Filt.csv edge_lineages.txt > query.align.final.csv
+./assign_lineage.sh query.align.wkey.filtered.csv
+paste -d, query.align.wkey.filtered.csv edge_lineages.txt > query.align.final.csv
 ```
 Add gene assignment
 ```
