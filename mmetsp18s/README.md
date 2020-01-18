@@ -81,7 +81,7 @@ grep "^>" 18s_all_mmetsp_unique.fa |wc -l
 ## 1. Create alignment of reference sequences with Infernal using the 18S ssu cov model as a reference for alignment.
 Name of your fasta file with reference sequences
 ```
-NAME_FA=DMSP_prod_db_18S.fa
+NAME_FA=18s_all_mmetsp_unique.fa
 ```
 Degap if necessary
 ```
@@ -102,10 +102,11 @@ seqmagick mogrify --deduplicate-sequences align.fa
 **I then take the alignment offline to manually curate and remove any large gaps in the alignment with Jalview or Geneious.**
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
-- Name of alignment AND XX to easily sed any extract characters in alignment that will mess up next steps
+
+Name of alignment to easily sed any extract characters in alignment that will mess up next steps and name header for new tree files
 ```
-NAMEFA=align.fa
-NAMET=dmsp
+NAMEFA=mmetsp.align.nogap.full.fa
+NAMET=mmetsp
 ```
 ```
 sed -i 's/|/_/g' $NAMEFA
@@ -136,8 +137,11 @@ taxit create -l 18S_rRNA -P refpkg --aln-fasta $NAMEFA --tree-stats RAxML_info.$
 ```
 
 ## 3. Phylogenetic placement of 18S OTUs onto reference
+
+If starting with this step, use the following that I have provided in repo:
 - mmetsp.align.nogap.full.fa  (reference alignment)
 - mmetsp.refpkg (reference package created above for pplacer)
+- tr_edge.sh (shell script to translate which edges are associated with which strain)
 
 Align the query reads and reference alignment
 First, clean names in OTU file
@@ -180,13 +184,12 @@ guppy fat --node-numbers --point-mass --pp -o query.align.phyloxml query.align.j
 ```
 cut -d "," -f4 query.align.csv | wc -l
 ```
-Create edgecode and add a new column to the query.align.csv file that interprets which edge each OTU was placed on
- *I'm not sure why there are multiple edges in the reference seqs, but here parsing those out so I can assign the csv file of OTUs to be references*
-remove first line which is weird symbols
+Create edgecode to interpret which edge each OTU was placed on
+ *There are multiple edges in the reference seqs*
 ```
 grep "MMETSP" query.align.jplace | sed 's/MM/ MM/g' | tr ' ' '\n' | tr '{' '\n' | awk -F} '{print $1}' | awk -F: '{print $1}' | tr '\n' ' ' | sed 's/ / |/g' | sed 's/|MME/\nMME/g' | grep -v "((" > edge_code.txt
 ```
-Create a new column to add to the to the query.align.csv file that interprets which edge each OTU was placed on, will create a new file called query.align.wkey.csv
+Create a new file with column that interprets which edge each OTU was placed on
 ```
 ./tr_edges.sh query.align.csv
 ```
@@ -194,7 +197,8 @@ Create a new column to add to the to the query.align.csv file that interprets wh
 ## 4. Process results
 Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -10,000
 - assign_lineage.sh (a shell script to add the lineages of MMETSP strains)
-- mmetspkey.txt (used by the shell script for reference)
+- mmetsp_all_lineages.csv (reference for taoxnomy of MMETSP strains used in shell script)
+- mmetspkey.txt (used to assign any associated DMSP synthesis genes to each MMETSP strain in query file)
 
 ```
 awk -F, '$6>=0.9 && $7<=-10000' query.align.wkey.csv > query.align.wkey.filt.csv
