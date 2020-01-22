@@ -17,7 +17,7 @@ Degap if necessary
 ```
 seqmagick mogrifty --ungap $NAME_FA
 ```
-Align
+Use infernal to align
 ```
 cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA
 ```
@@ -88,7 +88,7 @@ Remove gaps
 ```
 seqmagick mogrify --ungap query.fa
 ```
-Align
+Use infernal to align
 ```
 cmalign --dna -o query.sto --outformat Pfam eukarya-0p1.conv.cm query.fa
 ```
@@ -144,4 +144,5 @@ I translate to a tab delimited file out of preference
 tr "," "\t" < query.align.final.csv > query.align.final.DPtype.txt
 ```
 
-## Final product: With the steps above you have created query.align.final.DPtype.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the DMSP producer the OTU is most significantly related to, the HiDP or LoDP key of this DMSP producer, and the simplified taxonomy of this DMSP producer. The file has been filtered to only include OTUs that were significantly related to one of the known DMSP producers based on our filtering cut-off choices.
+## Final product
+With the steps above you have created query.align.final.DPtype.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the DMSP producer the OTU is most significantly related to, the HiDP or LoDP key of this DMSP producer, and the simplified taxonomy of this DMSP producer. The file has been filtered to only include OTUs that were significantly related to one of the known DMSP producers based on our filtering cut-off choices.
