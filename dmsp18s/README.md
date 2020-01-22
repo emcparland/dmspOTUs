@@ -1,50 +1,9 @@
-# Putative DMSP production of 18S OTUs with pplacer
-## Quick summary
-(work in progress)
+# Pplacer of OTU sequences in 18S sequence phylogeny of known DMSP producers to assign putative DMSP synthesis gene carriers.
 
-Question: Which eukaryotic DMSP producers are present in a natural mixed community?
+## 
+If you'll be using my previously made phylogeny of known DMSP producers (18S sequences I previously retrieved via ncbi based on the Supplemental Table in McParland and Levine 2019), you can *skip to Step 3*. 
 
-Motivation: 
-- We can't quite yet measure the eukaryotic DMSP synthesis genes in mixed natural communities.
-- Until ([2018](https://www.nature.com/articles/s41564-018-0119-5)) we didn't know the DMSP synthesis genes and still, there are no universal primers for the in situ eukaryotic community.
-- We can assess the diversity and relative abundance of the eukaryotic community in mixed natural communities with the 18S gene (V4 region here).
-
-Method:
-- I previously created a database of all known measurements of DMSP production in monocultures ([Supp Table 1 in McParland and Levine 2019 2019](https://aslopubs.onlinelibrary.wiley.com/doi/full/10.1002/lno.11076)). 
-- Create a reference alignment of these known DMSP producers' 18S gene, then use pplacer ([Matsen, Kodner and Armbrust 2010](https://matsen.fhcrc.org/papers/matsen2010pplacer.pdf)) to align the environmental 18S OTUs with this reference alignment.
-- If an OTU is significantly aligned with one of the reference sequences, assume that the OTU could also contain the synthesis gene
-
-A large portion of this analysis was made possible by an awesome blog post from the [Bowman lab](https://www.polarmicrobes.org/phylogenetic-placement-re-re-visited/) and helpful discussions with Harriet Alexander.
-
-- If you want to use the phylogeny I built from the 18S sequences of known DMSP producers, you could skip to step 3 to place your own OTUs within that phylogeny.
-- If you want to create your own phylogeny, start with step 1.
-- This is my first ever official, public repo! Let me know if anything needs clarity.
-
-## You'll need to install:
-- [pplacer](https://matsen.fhcrc.org/pplacer/)
-- [guppy](https://matsen.github.io/pplacer/generated_rst/guppy.html)
-- [seqmagick](http://fhcrc.github.io/seqmagick/)
-- [RAxML](https://cme.h-its.org/exelixis/web/software/raxml/) (can skip if starting at step 3)
-
-## You'll need:
-- [Rfam](https://rfam.xfam.org/family/RF01960) (RF01960) covariance model for euks small subunit rRNA is (provided here for convenience, can skip if starting at step 3)
-```
-cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
-```
-- Your 18S OTUs
-
-Mine happen to be here from a long time ago and I duplicated them into a new file so as not to accidentally ruin the hardwork of Erin 3 years ago:
-```
-cp ~/hu_tutorial/all_seq/pick_open/rep_set.fna otu_seqs.fa
-```
-I should have n=5072 OTU sequences
-```
-grep "^>" otu_seqs.fa |wc -l
-```
-
-- The 18S sequences of known DMSP producers (provided here for convenience, I previously searched for respectives sequences on ncbi to create Figure 1 in McParland and Levine 2019).
-
-You should have n=107 18S sequences.
+There are n=107 18S sequences of known DMSP producers.
 ```
 grep "^>" dmspdb_all.fa | wc -l
 ```
@@ -123,7 +82,7 @@ tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < otus.fa
 ```
 Concatenate the query reads and reference alignment
 ```
-cat mmetsp.align.nogap.full.fa  otus.fa > query.fa
+cat align.fa  otus.fa > query.fa
 ```
 Remove gaps
 ```
@@ -154,7 +113,7 @@ guppy fat --node-numbers --point-mass --pp -o query.align.phyloxml query.align.j
 cut -d "," -f4 query.align.csv | wc -l
 ```
 Create edgecode and add a new column to the query.align.csv file that interprets which edge each OTU was placed on
- *I'm sure there is a better way to do this, but the following commands creates 'edge_code.txt' where there are multiple edges in the reference seqs which will then be assigned to the csv file of OTUs*
+ *I'm sure there is a better way to do this, but the following commands creates edge_code.txt which is a list of the edges associated with each reference sequence.*
 ```
 sed 's/,[A-Z]\|([A-Z]/\n&/g' query.align.jplace |head -n107 |tail -n105 |tr '{' '\n'|awk -F} '{print $1}' |awk -F: '{print $1}' | tr '\n' ' ' | sed 's/,//g' | sed 's/(//g' | sed 's/ / |/g' | sed 's/|[A-Z]/\n&/g' > edge_code.txt
 ```
@@ -164,19 +123,25 @@ Create a new column to add to the to the query.align.csv file that interprets wh
 ```
 
 ## 4. Process results
-For the following I have provided in the rep:
+You can use the following provided in the repo to follow along:
 - assign_lineage.sh (a shell script to add the lineages of strains from ncbi taxonomy and whether strains is high or low producer)
-- dmspDB_key.txt (used by the shell script for reference)
+- dmspDB_key.csv (used by the shell script for reference)
 
 Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -4,000
+**Note that my cutoff for the likelihood differs between the two phylogenies. When I moved the alignment offline to an alignment viewer, I found that the posterior probability filter had removed a majority of poorly aligned sequences. However, a few sequences remained that were not as nicely aligned and they had significantly higher likelihood values than all of the other sequences, which is how I landed on both filters.**
 ```
 awk -F, '$6>=0.9 && $7<=-4000' query.align.wkey.csv > query.align.wkey.filt.csv
 echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.filtered.csv
 rm query.align.wkey.filt.csv
 ```
-Add lineages to the key
-*** START HERE ALMOST DONE**
+Add HiDP or LoDP key and simple lineages to the csv file (I used an arbitrary 'generic' taxonomy that are biased by my preferences, however the key file also contains the full taxonomy from ncbi if you prefer a different classification level).
 ```
 ./assign_lineage.sh query.align.wkey.filtered.csv
-paste -d, query.align.wkey.Filt.csv edge_lineages.txt > query.align.final.csv
+paste -d, query.align.wkey.filtered.csv edge_lineages.txt > query.align.final.csv
 ```
+I translate to a tab delimited file out of preference
+```
+tr "," "\t" < query.align.final.csv > query.align.final.DPtype.txt
+```
+
+## Final product: With the steps above you have created query.align.final.DPtype.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the DMSP producer the OTU is most significantly related to, the HiDP or LoDP key of this DMSP producer, and the simplified taxonomy of this DMSP producer. The file has been filtered to only include OTUs that were significantly related to one of the known DMSP producers based on our filtering cut-off choices.
