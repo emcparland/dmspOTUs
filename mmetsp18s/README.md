@@ -44,7 +44,7 @@ Degap if necessary
 ```
 seqmagick mogrifty --ungap $NAME_FA
 ```
-Align
+Use infernal to align
 ```
 cmalign --dna -o align.sto --outformat Pfam eukarya-0p1.conv.cm $NAME_FA
 ```
@@ -117,7 +117,7 @@ Remove gaps
 ```
 seqmagick mogrify --ungap query.fa
 ```
-Align
+Use infernal to align
 ```
 cmalign --dna -o query.sto --outformat Pfam eukarya-0p1.conv.cm query.fa
 ```
@@ -162,7 +162,7 @@ Filter results and only keep OTUs placed with posterior probability of 90% and l
 ```
 awk -F, '$6>=0.9 && $7<=-10000' query.align.wkey.csv > query.align.wkey.filt.csv
 echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.filtered.csv
-rm query.align.wkey.filtered.csv
+rm query.align.wkey.filt.csv
 ```
 Add lineages to the key (I used an arbitrary 'generic' taxonomy that are biased by my preferences, however the lineages csv file also contains the full taxonomy from ncbi if you prefer a different classification level).
 ```
@@ -171,7 +171,7 @@ paste -d, query.align.wkey.filtered.csv edge_lineages.txt > query.align.final.cs
 ```
 Add gene assignment
 ```
-length=`(wc -l < query.align.final.csv |awk '{print $1}')
+length=`(wc -l < query.align.final.csv |awk '{print $1}')`
 use="$((length-1))"
 tail -n $use query.align.final.csv |cut -f15 -d',' | sed -E 's/^MMETSP[0-9]+_//g' | tr "_" "-" | while read headername
 do
@@ -189,4 +189,5 @@ cat header gene_key |awk '{print $1,$2,$3}' | tr " " "\t" > gene_keytmp
 tr "," "\t" < query.align.final.csv > tmp
 paste gene_keytmp tmp > query.align.final.genes.txt
 ```
-## Final product: With the steps above you have created query.align.final.genes.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the MMETSP strain the OTU is most significantly related to, the presence (1) or absence (0) of DSYB, TpMT1 or TpMT2 in the associated transcriptome of the MMETSP strain, and the taxonomy of this MMETSP strain. The file has been filtered to only include OTUs that were significantly related to one of the MMETSP strains based on our filtering cut-off choices.
+## Final product
+With the steps above you have created query.align.final.genes.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the MMETSP strain the OTU is most significantly related to, the presence (1) or absence (0) of DSYB, TpMT1 or TpMT2 in the associated transcriptome of the MMETSP strain, and the taxonomy of this MMETSP strain. The file has been filtered to only include OTUs that were significantly related to one of the MMETSP strains based on our filtering cut-off choices.
