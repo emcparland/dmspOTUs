@@ -1,52 +1,9 @@
-# Putative DMSP synthesis of 18S OTUs with pplacer
-## Quick summary
-(work in progress)
+# Pplacer of OTU sequences in MMETSP 18S sequence phylogeny to assign putative DMSP synthesis gene carriers.
 
-Question: Which eukaryotic DMSP producers are present in a natural mixed community?
+## 
+My reference sequences are full-length 18S sequences from the MMETSP strains, which were obtained from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa). (For previous blast analyses to determine which MMETSP contain DMSP synthesis genes, I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)). If you'll be using my previously made phylogeny of MMETSP 18S sequences, you can *skip to Step 3*. 
 
-Motivation: 
-- We can't quite yet measure the eukaryotic DMSP synthesis genes in mixed communities.
-- But we do ([finally](https://www.nature.com/articles/s41564-018-0119-5)) know what those genes are!
-- We can assess the diversity and relative abundance of the eukaryotic community in mixed natural communities with the 18S gene (V4 region here).
-
-Method:
-- I previously used blast to determine which of the 400+ strains in the MMETSP database ([Keeling et al. 2014](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001889)) contain one (or more) of the DMSP synthesis genes. 
-- Create a reference alignment of the 18S gene of each MMETSP strain, then use pplacer ([Matsen, Kodner and Armbrust 2010](https://matsen.fhcrc.org/papers/matsen2010pplacer.pdf)) to align the environmental 18S OTUs with this reference alignment.
-- If an OTU is significantly aligned with one of the reference sequences and the respective reference sequence also contains one of the DMSP synthesis genes, assume that the OTU could also contain the synthesis gene
-
-A large portion of this analysis was made possible by an awesome blog post from the [Bowman lab](https://www.polarmicrobes.org/phylogenetic-placement-re-re-visited/) and helpful discussions with Harriet Alexander.
-
-- If you want to use the phylogeny I built from the 18S sequences of MMETSP transcriptomes, you could skip to step 3 to place your own OTUs within that phylogeny.
-- If you want to create your own phylogeny, start with step 1.
-- This is my first ever official, public repo! Let me know if anything needs clarity.
-
-## You'll need to install:
-- [pplacer](https://matsen.fhcrc.org/pplacer/)
-- [guppy](https://matsen.github.io/pplacer/generated_rst/guppy.html)
-- [seqmagick](http://fhcrc.github.io/seqmagick/)
-- [RAxML](https://cme.h-its.org/exelixis/web/software/raxml/) (can skip if starting at step 3)
-
-## You'll need:
-- [Rfam](https://rfam.xfam.org/family/RF01960) (RF01960) covariance model for euks small subunit rRNA is (provided here for convenience, can skip if starting at step 3)
-```
-cmconvert eukarya-0p1.cm  > eukarya-0p1.conv.cm
-```
-- Your 18S OTUs
-
-Mine happen to be here from a long time ago and I duplicated them into a new file so as not to accidentally ruin the hardwork of Erin 3 years ago:
-```
-cp ~/hu_tutorial/all_seq/pick_open/rep_set.fna otu_seqs.fa
-```
-I should have n=5072 OTU sequences
-```
-grep "^>" otu_seqs.fa |wc -l
-```
-
-- The MMETSP 18S sequences (provided here for convenience)
-
-My reference sequences are full-length 18S sequences from the MMETSP strains, which were obtained from [iMicrobe](https://datacommons.cyverse.org/browse/iplant/home/shared/imicrobe/projects/104/18s/18s.fa). (For blast analyses to determine which MMETSP contain DMSP synthesis genes, I used the recently re-assembled MMETSP transcriptomes ([Johnson, Alexander and Brown 2018](https://academic.oup.com/gigascience/article/8/4/giy158/5241890)).
-
-You should have n=655 18S sequences from the MMETSP transcriptomes. (Note, this is less than the n=678 you would have from the Johnson study).
+You will have n=655 18S sequences from the MMETSP transcriptomes. (Note, this is less than the recently updated n=678 transcriptomes in the Johnson study).
 ```
 grep "^>" 18s.fa | wc -l
 ```
@@ -196,6 +153,8 @@ Create a new file with column that interprets which edge each OTU was placed on
 
 ## 4. Process results
 Filter results and only keep OTUs placed with posterior probability of 90% and likelihood < -10,000
+**Note that my cutoff for the likelihood differs between the two phylogenies. When I moved the alignment offline to an alignment viewer, I found that the posterior probability filter had removed a majority of poorly aligned sequences. However, a few sequences remained that were not as nicely aligned and they had significantly higher likelihood values than all of the other sequences, which is how I landed on both filters.**
+
 - assign_lineage.sh (a shell script to add the lineages of MMETSP strains)
 - mmetsp_all_lineages.csv (reference for taoxnomy of MMETSP strains used in shell script)
 - mmetspkey.txt (used to assign any associated DMSP synthesis genes to each MMETSP strain in query file)
@@ -205,7 +164,7 @@ awk -F, '$6>=0.9 && $7<=-10000' query.align.wkey.csv > query.align.wkey.filt.csv
 echo "origin,name,multiplicity,edge_num,like_weight_ratio,post_prob,likelihood,marginal_like,distal_length,pendant_length,classification,map_ratio,map_overlap,map_identity,edge_name" | cat - query.align.wkey.filt.csv > query.align.wkey.filtered.csv
 rm query.align.wkey.filtered.csv
 ```
-Add lineages to the key
+Add lineages to the key (I used an arbitrary 'generic' taxonomy that are biased by my preferences, however the lineages csv file also contains the full taxonomy from ncbi if you prefer a different classification level).
 ```
 ./assign_lineage.sh query.align.wkey.filtered.csv
 paste -d, query.align.wkey.filtered.csv edge_lineages.txt > query.align.final.csv
@@ -230,3 +189,4 @@ cat header gene_key |awk '{print $1,$2,$3}' | tr " " "\t" > gene_keytmp
 tr "," "\t" < query.align.final.csv > tmp
 paste gene_keytmp tmp > query.align.final.genes.txt
 ```
+## Final product: With the steps above you have created query.align.final.genes.txt which contains the name of OTU, the statistics from pplacer associated with each OTU, the edge_name which is the name of the MMETSP strain the OTU is most significantly related to, the presence (1) or absence (0) of DSYB, TpMT1 or TpMT2 in the associated transcriptome of the MMETSP strain, and the taxonomy of this MMETSP strain. The file has been filtered to only include OTUs that were significantly related to one of the MMETSP strains based on our filtering cut-off choices.
