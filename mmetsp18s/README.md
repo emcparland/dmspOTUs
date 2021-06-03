@@ -60,7 +60,7 @@ seqmagick mogrify --deduplicate-sequences align.fa
 
 ## 2. Create a phylogenetic tree of the alignment, reference package from the alignment, tree and stats file with pplacer
 
-Name of alignment to easily sed any extract characters in alignment that will mess up next steps and name header for new tree files
+Name of alignment to easily sed any extra characters in alignment that will mess up next steps and name header for new tree files
 ```
 NAMEFA=mmetsp.align.nogap.full.fa
 NAMET=mmetsp

@@ -1,6 +1,6 @@
 # Assigning putative DMSP production/synthesis to environmental 18S OTU sequences
 
-## Quick summary (Work in progress)
+## Quick summary
 (This is my first ever official, public repo! Let me know if anything is confusing.)
 
 Question: Who are the eukaryotic DMSP producers present in situ?
@@ -13,15 +13,15 @@ Motivation:
 Method:
 - We measured the diversity and relative abundance of in situ eukaryotic communities using the 18S gene (V4 region).
 - I assigned the OTUs a putative DMSP phenotype or genotype using pplacer ([Matsen, Kodner and Armbrust 2010](https://matsen.fhcrc.org/papers/matsen2010pplacer.pdf)) by aligning the OTU sequences with one of two reference alignments:
-	1. dmsp18s: I previously created a database of all known measurements of DMSP production in monocultures ([Supp Table 1 in McParland and Levine 2019 2019](https://aslopubs.onlinelibrary.wiley.com/doi/full/10.1002/lno.11076)). I created a reference alignment of this database using the 18S sequences of the measured strains retrieved from ncbi.
-	2. mmetsp18s: I previously used blast to determine which of the 400+ strains in the MMETSP database ([Keeling et al. 2014](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001889)) contain one (or more) of the eukaryotic DMSP synthesis genes. I created a reference alignment of the 18S sequences of the MMETSP strains.
+	1. dmsp18s: I previously created a database of all known measurements of DMSP production in monocultures ([Supp Table 1 in McParland and Levine 2019 2019](https://aslopubs.onlinelibrary.wiley.com/doi/full/10.1002/lno.11076)). I created a reference alignment of this database using the full-length 18S sequences of the measured strains retrieved from ncbi.
+	2. mmetsp18s: I recently queried the MMETSP database ([Keeling et al. 2014](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001889)) using HMM profiles and found 400+ strains contain one (or more) of the eukaryotic DMSP synthesis genes ([McParland et al. 2021](https://sfamjournals.onlinelibrary.wiley.com/doi/full/10.1111/1462-2920.15393)). I created a reference alignment of the full-length 18S sequences of the MMETSP strains.
 
 - If an OTU is significantly aligned with:
 	1. one of the known DMSP producer sequences, assume that the OTU can also produce DMSP.
 	2. one of the MMETSP sequences and the respective transcriptome contained one of the DMSP synthesis genes, assume that the OTU also contains the synthesis gene.
 
-CREDIT: 
-A large portion of this analysis was made possible by an awesome blog post from the [Bowman lab](https://www.polarmicrobes.org/phylogenetic-placement-re-re-visited/) and  helpful discussions with Harriet Alexander. Science questions were driven by ideas discussed with Naomi M. Levine. The 18S sequences were compiled previously and will be presented elsewhere, but many thanks to the pipeline of Sarah Hu.
+Acknowledgements: 
+A large portion of this analysis was made possible by an awesome blog post from the [Bowman lab](https://www.polarmicrobes.org/phylogenetic-placement-re-re-visited/) and  helpful discussions with Harriet Alexander. Science questions were driven by ideas discussed with Naomi M. Levine. The 18S sequences were compiled previously with much help from the pipeline of Sarah Hu and will be presented elsewhere.
 
 
 ## Pipeline description 
